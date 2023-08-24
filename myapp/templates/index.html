@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>会话掉线</title>
+    <style>
+        .c1 {
+            margin-top: 130px;
+        }
+        .c2 {
+            color: red;
+        }
+        .c3:hover{
+            color: #ff6700;
+            font-size: 21px;
+        }
+        .c4 {
+            color: #3ccfff;
+        }
+        .c5 {
+            color: #3c3f41;
+            font-size: 12px;
+        }
+    </style>
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css">
+</head>
+<body>
+    <div style="text-align:center;width: 1500px;height: 850px; margin: 30px auto; background-color: #f2f3f5">
+{#    <div style="text-align:center;width: 1300px;margin: auto; background-color: #f2f2f2">#}
+        <div style="margin-left: 1418px">
+            <a href="/index" class="btn btn-info">刷新页面</a>
+          </div>
+        <div style="height: 155px;margin: 50px auto" >
+            <form action="/modify" method="post">
+            {% csrf_token %}
+                <label style="font-weight: bold; font-size: 17px"> 会话id:</label>
+                <input type="text"  name="session_id" style="width:200px;height:35px" required placeholder="输入正确的会话id" >&nbsp &nbsp &nbsp
+                <input  type="submit" value="会话掉线" class="btn btn-primary"> &nbsp &nbsp
+                <a href="/get_record" class="btn btn-primary">操作记录</a>
+                <div style="margin-top: 20px;">
+                    <label style="font-weight: bold; font-size: 17px"> 环境:</label>
+                    <input type="radio" name="env" value="QA2" checked="checked"><strong>新QA</strong>&nbsp
+                    <input type="radio" name="env" value="QA"><strong>老QA</strong> &nbsp &nbsp
+                    <span class="c5">选择正确的环境</span>
+
+                </div>
+                <div style="margin-top: 20px">
+                    <p class="c4">{{ session_id }}</p>
+                    <p class="c4">{{ create_time }}</p>
+                    <p class="c4">{{ create_time_modify }}</p>
+                    <p >{{ error_session_id }}</p>
+                    <p>{{ error_env }}</p>
+                    <p class="c2">{{ error_msg }}</p>
+                </div>
+            </form>
+        </div>
+        <div style="height: 80px;margin: 50px auto" >
+            <form  method="post" name="page_or_password">
+            {% csrf_token %}
+                <label style="font-weight: bold; font-size: 17px"> 账号:</label>
+                <input type="text" name="kf_account" style="width:150px;height:35px" required placeholder="输入正确的客服账号">&nbsp &nbsp &nbsp
+{#                <input  type="submit" value="查询着陆页" class="btn btn-primary"> &nbsp &nbsp#}
+                <button  class="btn btn-primary" onclick="get_page()"> 查询着陆页 </button>&nbsp &nbsp
+                <button  class="btn btn-primary" onclick="modify_password()"> 重置密码</button>&nbsp &nbsp
+                <span class="c5">数据查询、处理需要时间</span>
+                <div style="margin-top: 20px;">
+                    <label style="font-weight: bold; font-size: 17px"> 公司:</label>
+                    <select class="form-select form-select-lg mb-3" aria-label=".form-select-sm example" name="company">
+                        <option value="1402">新QA--1402</option>
+                        <option value="1500">新QA--1500</option>
+                        <option value="3401">老QA--3401</option>
+                        <option value="3403">新QA--3403</option>
+                        <option value="8424">GS--8424</option>
+                        <option value="8425">GS--8425</option>
+{#                        {% for item in select %}#}
+{#                             <option value={{ item.company }}>{{ item.company_info }}</option>#}
+{#                        {% endfor %}#}
+
+                    </select>&nbsp &nbsp &nbsp
+                    <span class="c5">选择正确的公司</span>
+                </div>
+                <div style="margin-top: 20px">
+                    <span class="c4"><strong>{{ kf_account }}</strong></span>
+                    <span class="c2">{{ error_modify }}</span>
+                    <p class="c4"><strong>{{ kf_account_suc }}</strong></p>
+                    <p class="c4"><strong>{{ sucess_modify }}</strong></p>
+                    <p class="c2">{{ kf_account_fail }}</p>
+                    <p class="c2">{{ error_msg_page_1 }}</p>
+                    <p class="c2">{{ error_msg_page_2 }}</p>
+                    <p class="c2">{{ error_msg_page_password }}</p>
+                </div>
+            </form>
+        </div>
+
+        <div class="c1" style="height: 60px">
+            <form  method="post" name="card_or_phone">
+            {% csrf_token %}
+            <label style="font-weight: bold; font-size: 17px"> 数量:</label>
+            <input type="text" name="num" value="1" style="width:60px;height:35px;text-align:center;vertical-align:middle;" required placeholder="输入数量">&nbsp &nbsp
+            <button  class="btn btn-primary" onclick="id_card()"> 生成身份证号 </button>&nbsp &nbsp
+            <button  class="btn btn-primary" onclick="phone()"> 生成手机号</button>&nbsp &nbsp
+            <span class="c5">输入1-50之间的整数</span>
+
+        </form>
+        <br>
+            <span class="c2">{{ error_card_or_phone_msg }}</span>
+            {% for id in card_or_phone_list %}
+                <span class="c3" style="font-weight: bold;display: inline-block;width: 200px; font-size: 17px"> {{ id }} </span>
+            {% endfor %}
+        </div>
+    </div>
+    <div >
+        <a href="/tantou" class="btn btn-info">刷新页面1</a>
+    </div>
+</body>
+</html>
+<script>
+    function id_card(){
+        document.card_or_phone.action="/id_card/";
+        document.card_or_phone.submit();
+    }
+    function phone() {
+        document.card_or_phone.action = "/get_phone";
+        document.card_or_phone.submit();
+    }
+    function get_page(){
+        document.page_or_password.action="/get_page/";
+        document.page_or_password.submit();
+    }
+    function modify_password() {
+        document.page_or_password.action = "/modify_password";
+        document.page_or_password.submit();
+    }
+</script>

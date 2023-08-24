@@ -1,0 +1,60 @@
+{% extends 'bak2/layout.html' %}
+
+{% block content %}
+    <div style="margin-top: 20px;margin-right:200px;text-align: right">
+        <a href="/index" class="btn btn-info">返回首页</a>
+    </div>
+    </div>
+    <div class="bs-example" data-example-id="hoverable-table" style="margin: 30px auto; width: 1000px">
+        <div style="float: right;width: 300px;margin-bottom: 30px">
+                <form method="get">
+                    <div class="input-group">
+                        <input type="text" name="q" class="form-control" id="search_input" placeholder="请输入会话id进行查询"
+                               value="{{ search_data }}">
+                        <span class="input-group-btn">
+                        <button class="btn btn-default" type="submit">
+                            <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                        </button>
+                        <button type="button" class="btn btn-default" onclick="clear_input()">重置
+{#                            <span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>#}
+                        </button>
+                      </span>
+                    </div>
+                </form>
+        </div>
+        <table class="table table-hover">
+          <thead>
+            <tr>
+                <th>环境</th>
+                <th>会话id</th>
+                <th>修改前的create_time</th>
+                <th>修改后的create_time</th>
+                <th>提交时间</th>
+            </tr>
+          </thead>
+        <tbody>
+            {% for record in queryset %}
+            <tr>
+                <td>{{ record.env }}</td>
+                <td>{{ record.session_id }}</td>
+                <td>{{ record.crete_time_before }}</td>
+                <td>{{ record.crete_time_after }}</td>
+                <td>{{ record.submit_time }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+         <div class="clearfix"  style="float: right">
+            <ul class="pagination">
+                {{ page_string }}
+            </ul>
+
+        </div>
+    </div>
+    <script type="text/javascript">
+        function clear_input(){
+            var input_ele = document.getElementById("search_input");
+            input_ele.value="";
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>会话掉线</title>
+    <style>
+        .c1 {
+            margin-top: 130px;
+        }
+        .c2 {
+            color: red;
+        }
+        .c3:hover{
+            color: #ff6700;
+            font-size: 21px;
+        }
+        .c4 {
+            color: #6681ff;
+        }
+    </style>
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css">
+</head>
+<body>
+    <div style="text-align:center;width: 1300px;margin: 30px auto; background-color: #f2f2f2">
+{#    <div style="text-align:center;width: 1300px;margin: auto; background-color: #f2f2f2">#}
+        <div style="margin-left: 1218px">
+            <a href="/index" class="btn btn-info">刷新页面</a>
+          </div>
+        <div style="height: 90px;margin: 50px auto">
+            <form action="/modify" method="post">
+            {% csrf_token %}
+                <label style="font-weight: bold; font-size: 17px"> 会话id:</label>
+                <input type="text" name="session_id" style="width:200px;height:35px" required placeholder="请输入会话id">&nbsp &nbsp &nbsp
+                <input  type="submit" value="执行会话掉线" class="btn btn-primary"> &nbsp
+                <a href="/get_record" class="btn btn-info">操作记录</a>
+                <div style="margin-top: 20px;">
+                    <label style="font-weight: bold; font-size: 17px"> 环境:</label>
+                    <input type="radio" name="env" value="QA2" checked="checked"><strong>新QA</strong>&nbsp
+                    <input type="radio" name="env" value="QA"><strong>老QA</strong>
+                </div>
+                <div style="margin-top: 20px">
+                    <p class="c4">{{ session_id }}</p>
+                    <p>{{ create_time }}</p>
+                    <p class="c4">{{ create_time_modify }}</p>
+                    <p>{{ error_session_id }}</p>
+                    <p>{{ error_env }}</p>
+                    <p class="c2">{{ error_msg }}</p>
+                </div>
+            </form>
+        </div>
+        <div class="c1" style="height: 60px">
+            <form action="/id_card/" method="post">
+            {% csrf_token %}
+            <input type="text" name="num" value="1" style="width:60px;height:35px;text-align:center;vertical-align:middle;" required><strong>个身份证号码</strong>&nbsp &nbsp
+            <input type="submit" value="生 成" class="btn btn-primary">
+        </form>
+        <br>
+            <span class="c2">{{ error_id_msg }}</span>
+            {% for id in id_list %}
+                <span class="c3" style="font-weight: bold;display: inline-block;width: 200px; font-size: 17px"> {{ id }} </span>
+            {% endfor %}
+        </div>
+        <div class="c1" style="height: 200px">
+            <form action="/get_phone" method="post">
+            {% csrf_token %}
+            <input type="text" name="num" value="1" style="width:60px;height:35px;text-align:center;vertical-align:middle;" required><strong>个手机号码</strong>&nbsp &nbsp
+            <input class="btn btn-primary" type="submit" value="生 成">
+        </form>
+        <br>
+            <span class="c2">{{ error_phone_msg }}</span>
+              {% for phone in phone_list %}
+                <span class="c3" style="font-weight: bold;display: inline-block;width: 120px; font-size: 17px"> {{ phone }} </span>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

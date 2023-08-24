@@ -1,0 +1,92 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Landing Page 111</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <script src="https://probe.bjmantis.net/chat/jquery-1.12.4.min.js"></script>
+    <script src="https://probe.bjmantis.net/chat/js/eruda.js"></script>
+    <script>
+        String.prototype.getUrl = function getUrl() {
+            var reg = /([^=&?]+)=([^=&?]+)/g,
+                obj = {};
+            this.replace(reg, function () {
+                var key = arguments[1],
+                    value = decodeURI(arguments[2]);
+                obj[key] = value;
+            });
+            return obj;
+        }
+        try {
+            fake = encodeURIComponent(location.href.getUrl().searchWord || '');
+        } catch (e) {
+        }
+    </script>
+    <script src="https://pg-demo2.bjmantis.net/chat/js/dist/mantis.min.js?1402#64a379902369f5000110ef66"></script>
+{#    <script src="https://pg-test.bjmantis.net/chat/js/dist/mantis.min.js?3401#64224a31ffad170001ea3b45"></script>#}
+</head>
+
+<body>
+    <h3>移动端着陆页演示</h3>
+
+    <div>
+        <button onclick="mantis.requestChat('发起元素A')">发起元素A</button>
+        <button onclick="mantis.requestChat('发起元素B')">发起元素B</button>
+        <button onclick="mantis.requestChat('发起元素C')">发起元素C</button>
+        <button onclick="mantis.requestChat('发起元素D')">发起元素D</button>
+    </div>
+    <ul class="main">
+        <li onclick="mantis.requestChat()">点击发起聊天</li>
+    </ul>
+    <script>
+        
+        eruda.init()
+    </script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        html,
+        body {
+            height: 100%;
+            overflow-y: auto;
+            background: #00cfff;
+        }
+
+        .main {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        h3 {
+            text-align: center;
+            margin-top: 90px;
+            font-size: 32px;
+            color: #333;
+        }
+
+        .main li {
+            margin: 0 0 20px 0;
+            border-radius: 3px;
+            text-decoration: none;
+            color: #fff;
+            font-size: 14px;
+            padding: 8px 20px;
+            background: #04abc5;
+            display: inline-block;
+            min-width: 60px;
+            box-shadow: 4px 4px 10px 2px #fff
+        }
+    </style>
+</body>
+
+</html>

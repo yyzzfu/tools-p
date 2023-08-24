@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>着陆页列表</title>
+    <style>
+
+        .c1 {
+            font-size: 12px;
+        }
+        .c2 {
+            font-size: 15px;
+        }
+	</style>
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css">
+</head>
+<body>
+
+    <div class="bs-example" data-example-id="hoverable-table" style="margin: 30px auto; width: 1500px">
+        <div style="float: left;display: inline-block;margin-left: 1418px">
+            <a href="/index" class="btn btn-info">返回首页</a>
+        </div>
+        <br>
+        <br>
+        <div>
+            <span style="color: #6681ff" class="c2"><strong>{{ kf_info.kf_account }}</strong></span>
+            <span>在</span>
+            <span style="color: #6681ff" class="c2"><strong>{{ kf_info.service_group_name_num }}</strong></span>
+            <span>个客服分组中，共有</span>
+            <span style="color: #6681ff" class="c2"><strong>{{ kf_info.probe_num }}</strong></span>
+            <span>个探头</span>
+        </div>
+        <br>
+
+    <table class="table table-striped">
+      <thead>
+         <tr>
+            <th>客服账号/权重</th>
+            <th>客服分组</th>
+            <th>探头名称</th>
+            <th>着陆页</th>
+            <th>无痕着陆页</th>
+         </tr>
+      </thead>
+      <tbody>
+      {% for data in data_pre %}
+        <tr>
+          <td class="c1">{{ data.kf_account }}</td>
+          <td class="c1">{{ data.service_group_name }}</td>
+          <td class="c1">{{ data.probe_name }}</td>
+          <td class="c1">
+              <a href="{{ data.test_page }}" target="_blank" >{{ data.test_page }}</a>
+          </td>
+          <td class="c1">
+              <a href="{{ data.non_trace_page }}" target="_blank">{{ data.non_trace_page }}</a>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
