@@ -115,18 +115,18 @@ def modify(request):
     try:
         if len(session_id) != 24:
             raise Exception
-        # submit_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        submit_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         do = DoMongo(session_id, env)
         create_time = do.select_mongo()
         do.modify_mongo()
         create_time_modify = do.select_mongo()
         do.close_collect()
         env_translation = "新QA"
-        # if env == "QA":
-        #     env_translation = "老QA"
-        # models.Record.objects.create(session_id=session_id, env=env_translation, status="成功",
-        #                              crete_time_before=create_time,
-        #                              crete_time_after=create_time_modify, submit_time=submit_time)
+        if env == "QA":
+            env_translation = "老QA"
+        models.Record.objects.create(session_id=session_id, env=env_translation, status="成功",
+                                     crete_time_before=create_time,
+                                     crete_time_after=create_time_modify, submit_time=submit_time)
         create_time = '修改前的create_time：{}'.format(create_time)
         create_time_modify = '修改后的create_time：{}'.format(create_time_modify)
         session_id = '提交的会话id：{}'.format(session_id)
