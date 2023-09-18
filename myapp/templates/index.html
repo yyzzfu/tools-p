@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <title>会话掉线</title>
     <style>
+        body {
+            overflow: hidden;
+        }
         .c1 {
             margin-top: 130px;
         }
@@ -24,17 +27,18 @@
     </style>
     <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css">
 </head>
-<body>
-    <div style="text-align:center;width: 1500px;height: 850px; margin: 30px auto; background-color: #f2f3f5">
-{#    <div style="text-align:center;width: 1300px;margin: auto; background-color: #f2f2f2">#}
+<body style=" background-color: #f2f3f5">
+    <div style="text-align:center; margin: 30px auto;">
         <div style="margin-left: 1418px">
             <a href="/index" class="btn btn-info">刷新页面</a>
           </div>
-        <div style="height: 155px;margin: 50px auto" >
-            <form action="/modify" method="post">
+        <div style="height: 155px;margin: 50px auto" id="chat">
+{#            <form action="/modify" method="post">#}
+            <form action="/modify" method="post" onsubmit="return assert_chat()">
             {% csrf_token %}
                 <label style="font-weight: bold; font-size: 17px"> 会话id:</label>
-                <input type="text"  name="session_id" style="width:200px;height:35px" required placeholder="输入正确的会话id" >&nbsp &nbsp &nbsp
+{#                <input type="text"  id="session_id" name="session_id" style="width:200px;height:35px" required placeholder="输入正确的会话id" >&nbsp &nbsp &nbsp#}
+                <input type="text"  id="session_id" name="session_id" style="width:200px;height:35px" placeholder="输入正确的会话id" >&nbsp &nbsp &nbsp
                 <input  type="submit" value="会话掉线" class="btn btn-primary"> &nbsp &nbsp
                 <a href="/get_record" class="btn btn-primary">操作记录</a>
                 <div style="margin-top: 20px;">
@@ -92,7 +96,7 @@
 {#            </form>#}
 {#        </div>#}
 
-        <div class="c1" style="height: 60px">
+        <div class="c1" style="height: 60px" id="phone">
             <form  method="post" name="card_or_phone">
             {% csrf_token %}
             <label style="font-weight: bold; font-size: 17px"> 数量:</label>
@@ -105,7 +109,7 @@
         <br>
             <span class="c2">{{ error_card_or_phone_msg }}</span>
             {% for id in card_or_phone_list %}
-                <span class="c3" style="font-weight: bold;display: inline-block;width: 200px; font-size: 17px"> {{ id }} </span>
+                <span class="c3 click" style="font-weight: bold;display: inline-block;width: 200px; font-size: 17px" onclick="f()">{{ id }}</span>
             {% endfor %}
         </div>
     </div>
@@ -114,6 +118,7 @@
 {#    </div>#}
 </body>
 </html>
+<script src="/static/bootstrap/js/jquery-3.6.0.min.js"></script>
 <script>
     function id_card(){
         document.card_or_phone.action="/id_card/";
@@ -131,4 +136,75 @@
         document.page_or_password.action = "/modify_password";
         document.page_or_password.submit();
     }
+    function f() {
+        var text=$(".click").text();//获取要复制的文本
+            copyText(text);
+            alert_tips()
+            }
+    function copyText(text) {//拷贝文本函数
+        var oInput = document.createElement('input');//创建一个input标签
+        oInput.value = text;//设置value属性
+        document.body.appendChild(oInput);//挂载到body下面
+        oInput.select(); // 选择对象
+        document.execCommand("Copy"); // 执行浏览器复制命令
+        {#oInput.className = 'oInput';#}
+        {#oInput.style.display='none';#}
+        document.body.removeChild(oInput)
+    }
+
+    /*
+    * 说明: 弹窗提示,3秒后自动消失
+    * */
+    function alert_tips() {
+        {#let success_css = 'display: block;text-align: center;padding: 10px 20px;border-radius: 5px;color: #3c763d;background-color: #dff0d8;border-color: #d6e9c6;margin:';#}
+        let success_css = 'text-align: center;padding: 10px 20px;border-radius: 5px;color: #3c763d;background-color: #dff0d8;border-color: #d6e9c6;margin: 0 auto;width: 100px;';
+        let add_alert = '<div id="alert_test" style="'+success_css+'">'+'复制成功'+'</div>';
+        $('body div#phone').append(add_alert);
+        //transition: all 3s 2s linear;
+        $('#alert_test').css({"top":"100px","transition":"3s"});
+        setTimeout(() => {
+            // console.log('sleep 1.8s.');
+            let index = 10;
+            let interval = setInterval(function () {
+                if(index === -60){ //设3秒时间段
+                    clearInterval(interval);
+                    $('#alert_test').remove(); //显示完后删除节点
+                }
+                $('div#alert_test').css({"opacity":(index/10)});
+                // console.log('===>',index);
+                index--;
+            },30)
+        }, 1000); //延时1.8秒
+    }
+
+    function assert_chat() {
+        let session_id = $('#session_id').text().trim();
+        if (session_id.length != 24 || session_id == '' || session_id == undefined) {
+            let test = '请输入正确的会话id';
+            {#let warning_css = 'text-align: center;padding: 10px 20px;border-radius: 5px;color: #8a6d3b;background-color: #fcf8e3;border-color: #faebcc;;margin: 0 auto;width: 200px;';#}
+            let warning_css = 'text-align: center;padding: 10px 20px;border-radius: 5px;color: #a94442;background-color: #f2dede;border-color: #ebccd1;margin: 0 auto;width: 200px;';
+            let add_alert = '<div id="assert_test" style="'+warning_css+'">'+test+'</div>';
+            $('body div#chat').append(add_alert);
+            //transition: all 3s 2s linear;
+            $('#assert_test').css({"top":"100px","transition":"3s"});
+            setTimeout(() => {
+                // console.log('sleep 1.8s.');
+                let index = 10;
+                let interval = setInterval(function () {
+                    if(index === -60){ //设3秒时间段
+                        clearInterval(interval);
+                        $('#assert_test').remove(); //显示完后删除节点
+                    }
+                    $('div#assert_test').css({"opacity":(index/10)});
+                    // console.log('===>',index);
+                    index--;
+                    },30)
+                }, 1000); //延时1.8秒
+            return false
+            }
+            else {
+                return true
+        }
+    }
+
 </script>
