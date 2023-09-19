@@ -178,7 +178,9 @@
     }
 
     function assert_chat() {
-        let session_id = $('#session_id').text().trim();
+        let session_id = $('#session_id').text();
+		session_id = session_id.replace(/\s+/g,'');
+        // console.log(session_id)
         if (session_id.length != 24 || session_id == '' || session_id == undefined) {
             let test = '请输入正确的会话id';
             {#let warning_css = 'text-align: center;padding: 10px 20px;border-radius: 5px;color: #8a6d3b;background-color: #fcf8e3;border-color: #faebcc;;margin: 0 auto;width: 200px;';#}
