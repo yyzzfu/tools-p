@@ -66,9 +66,10 @@ def id_card(request):
     if request.method == 'GET':
         return redirect('/index')
     try:
-        num = int(request.POST.get('num'))
-        if num > 50:
-            raise Exception
+        # num = int(request.POST.get('num'))
+        # if num > 50:
+        #     raise Exception
+        num = 1
         f = Faker('zh-CN')
         id_list = []
         a = 0
@@ -89,9 +90,10 @@ def get_phone(request):
     if request.method == 'GET':
         return redirect('/index')
     try:
-        num = int(request.POST.get('num'))
-        if num > 50:
-            raise Exception
+        # num = int(request.POST.get('num'))
+        # if num > 50:
+        #     raise Exception
+        num = 1
         phone_list = []
         a = 0
         time_str = str(int(time.time()))
@@ -171,7 +173,7 @@ def get_record(request):
 
 
 all_company_info = {
-    "1402": {"username": "sy-fuyiqiang@1402", "password": "qwer1234", "domain": "b2009.bjmantis.net",
+    "1402": {"username": "yqadmin@1402", "password": "Qwer1234", "domain": "b2009.bjmantis.net",
              "test_page_before": "pg-demo2"},
     "3403": {"username": "fuyiqiang@3403", "password": "Qwer1234", "domain": "b2009.bjmantis.net",
              "test_page_before": "pg-demo2"},
@@ -182,7 +184,9 @@ all_company_info = {
     "8425": {"username": "fuyiqiang@8425", "password": "Qwer1234", "domain": "b1010.south.bjmantis.cn",
              "test_page_before": "pg-chatn6"},
     "1500": {"username": "fl@1500", "password": "Qwer1234", "domain": "b2010.bjmantis.net",
-             "test_page_before": "pg-demo2"}
+             "test_page_before": "pg-demo2"},
+    "50012": {"username": "yqadmin@1500", "password": "Qwer1234", "domain": "b2006.bjmantis.net",
+              "test_page_before": "pg-demo2"}
 }
 
 
@@ -228,7 +232,7 @@ def get_page(request):
     except:
         kf_account = "输入的客服账号：" + kf_account
         company = "-----选择的公司：" + company
-        error_msg = kf_account + company + '-----获取token失败！系统故障，可能正在发版！'
+        error_msg = kf_account + company + '-----获取token失败！请稍后再试！'
         context = {
             "error_msg_page": error_msg
         }
