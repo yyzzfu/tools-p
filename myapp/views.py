@@ -94,23 +94,23 @@ class MysqlOperate:
         self.__close_conn()
 
     def search_data(self):
-        sql_for_RPA_TASK_BUG_SEND_FLAG = "select * from base_company_config where company_id = 50012 and code = 'RPA_TASK_BUG_SEND_FLAG';"
-        sql_for_RPA_TASK_CHOOSE_CHAT_COUNT = "select * from base_company_config where company_id = 50012 and code = 'RPA_TASK_CHOOSE_CHAT_COUNT';"
-        sql_for_RPA_QUICK_TASK_CHOOSE_CHAT_COUNT = "select * from base_company_config where company_id = 50012 and code = 'RPA_QUICK_TASK_CHOOSE_CHAT_COUNT';"
+        sql_for_RPA_TASK_BUG_SEND_FLAG = "select value from base_company_config where company_id = 50012 and code = 'RPA_TASK_BUG_SEND_FLAG';"
+        sql_for_RPA_TASK_CHOOSE_CHAT_COUNT = "select value from base_company_config where company_id = 50012 and code = 'RPA_TASK_CHOOSE_CHAT_COUNT';"
+        sql_for_RPA_QUICK_TASK_CHOOSE_CHAT_COUNT = "select value from base_company_config where company_id = 50012 and code = 'RPA_QUICK_TASK_CHOOSE_CHAT_COUNT';"
         res1 = self.query(sql_for_RPA_TASK_BUG_SEND_FLAG)
         res2 = self.query(sql_for_RPA_TASK_CHOOSE_CHAT_COUNT)
         res3 = self.query(sql_for_RPA_QUICK_TASK_CHOOSE_CHAT_COUNT)
         return str(res1), str(res2), str(res3)
 
 
-    def update_RPA_TASK_BUG_SEND_FLAG(self):
-        sql_for_RPA_TASK_BUG_SEND_FLAG = "update base_company_config set value = 'Y' where company_id = 50012 and code = 'RPA_TASK_BUG_SEND_FLAG';"
+    def update_RPA_TASK_BUG_SEND_FLAG(self, RPA_TASK_BUG):
+        sql_for_RPA_TASK_BUG_SEND_FLAG = f"update base_company_config set value = {RPA_TASK_BUG} where company_id = 50012 and code = 'RPA_TASK_BUG_SEND_FLAG';"
 
-    def update_RPA_TASK_CHOOSE_CHAT_COUNT(self):
-        sql_for_RPA_TASK_BUG_SEND_FLAG = "update base_company_config set value = 'Y' where company_id = 50012 and code = 'RPA_TASK_CHOOSE_CHAT_COUNT';"
+    def update_RPA_TASK_CHOOSE_CHAT_COUNT(self, count):
+        sql_for_RPA_TASK_BUG_SEND_FLAG = f"update base_company_config set value = {count} where company_id = 50012 and code = 'RPA_TASK_CHOOSE_CHAT_COUNT';"
 
-    def update_RPA_QUICK_TASK_CHOOSE_CHAT_COUNT(self):
-        sql_for_RPA_TASK_BUG_SEND_FLAG = "update base_company_config set value = 'Y' where company_id = 50012 and code = 'RPA_QUICK_TASK_CHOOSE_CHAT_COUNT';"
+    def update_RPA_QUICK_TASK_CHOOSE_CHAT_COUNT(self, count):
+        sql_for_RPA_TASK_BUG_SEND_FLAG = f"update base_company_config set value = {count} where company_id = 50012 and code = 'RPA_QUICK_TASK_CHOOSE_CHAT_COUNT';"
 
 
 def index(request):
@@ -118,14 +118,27 @@ def index(request):
     return render(request, "index.html", {"RPA_bug": search_data[0], 'RPA_TASK_CHOOSE_CHAT_COUNT':search_data[1], 'RPA_QUICK_TASK_CHOOSE_CHAT_COUNT':search_data[2]})
 
 
-def RPA_bug_modify():
-    ...
+def RPA_bug_modify(request):
+    if request.method == 'GET':
+        return redirect('/index')
+    RPA_TASK_BUG = request.POST.get('RPA_bug')
+    MysqlOperate().update_RPA_TASK_BUG_SEND_FLAG(RPA_TASK_BUG)
+    return redirect('/index')
 
-def RPA_TASK_CHOOSE_CHAT_COUNT_modify():
-    ...
+def RPA_TASK_CHOOSE_CHAT_COUNT_modify(request):
+    if request.method == 'GET':
+        return redirect('/index')
+    count = request.POST.get('count')
+    MysqlOperate().update_RPA_TASK_BUG_SEND_FLAG(count)
+    return redirect('/index')
 
-def RPA_QUICK_TASK_CHOOSE_CHAT_COUNT_modify():
-    ...
+def RPA_QUICK_TASK_CHOOSE_CHAT_COUNT_modify(request):
+    if request.method == 'GET':
+        return redirect('/index')
+    count = request.POST.get('count')
+    MysqlOperate().update_RPA_QUICK_TASK_CHOOSE_CHAT_COUNT(count)
+    return redirect('/index')
+
 
 def id_card(request):
     if request.method == 'GET':
