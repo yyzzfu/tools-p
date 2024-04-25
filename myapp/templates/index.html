@@ -145,21 +145,41 @@
         <br>
 
         <span class="c1" style="height: 60px">
-            <label style="font-weight: bold; font-size: 17px"> RPA卡bug参数:</label>&nbsp &nbsp
+            <label style="font-weight: bold; font-size: 17px"> RPA私聊卡bug参数:</label>&nbsp &nbsp
             <span>{{ RPA_bug }}</span>&nbsp &nbsp
             <button  class="btn btn btn-warning" onclick="openModal('myModal1')"> 修改 </button>&nbsp &nbsp&nbsp &nbsp&nbsp &nbsp&nbsp &nbsp&nbsp &nbsp
-            <span class="c2">{{ error_card_or_phone_msg }}</span>
+{#            <span class="c2">{{ error_card_or_phone_msg }}</span>#}
         </span>
-         <div id="myModal1" class="modal">
+         <div id="myModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeModal('myModal1')">&times;</span>
                 <!-- 在这里添加输入框、下拉框等元素，用于输入修改内容 -->
                 <form  method="post" name="RPA_bug_name">
                     {% csrf_token %}
-                    <label style="font-weight: bold; font-size: 17px"> RPA卡bug参数: </label>
+                    <label style="font-weight: bold; font-size: 17px"> RPA私聊卡bug参数: </label>
                     <input type="radio" name="RPA_bug" value="Y" checked="checked"><strong>开启</strong>&nbsp &nbsp
                     <input type="radio" name="RPA_bug" value="N"><strong>关闭</strong>&nbsp &nbsp
                     <button  class="btn btn-primary" onclick="RPA_bug_modify()"> 确定 </button>&nbsp &nbsp
+             </form>
+            </div>
+        </div>
+
+        <span class="c1" style="height: 60px">
+            <label style="font-weight: bold; font-size: 17px"> RPA群聊卡bug参数:</label>&nbsp &nbsp
+            <span>{{ RPA_TASK_GROUP_BUG_SEND_FLAG }}</span>&nbsp &nbsp
+            <button  class="btn btn btn-warning" onclick="openModal('myModal4')"> 修改 </button>&nbsp &nbsp&nbsp &nbsp&nbsp &nbsp&nbsp &nbsp&nbsp &nbsp
+{#            <span class="c2">{{ error_card_or_phone_msg }}</span>#}
+        </span>
+         <div id="myModal4" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('myModal4')">&times;</span>
+                <!-- 在这里添加输入框、下拉框等元素，用于输入修改内容 -->
+                <form  method="post" name="RPA_TASK_GROUP_BUG_SEND_FLAG_name">
+                    {% csrf_token %}
+                    <label style="font-weight: bold; font-size: 17px"> RPA群聊卡bug参数: </label>
+                    <input type="radio" name="RPA_bug" value="Y" checked="checked"><strong>开启</strong>&nbsp &nbsp
+                    <input type="radio" name="RPA_bug" value="N"><strong>关闭</strong>&nbsp &nbsp
+                    <button  class="btn btn-primary" onclick="RPA_TASK_GROUP_BUG_SEND_FLAG_modify()"> 确定 </button>&nbsp &nbsp
              </form>
             </div>
         </div>
@@ -242,6 +262,10 @@
     function RPA_bug_modify(){
         document.RPA_bug_name.action="/RPA_bug_modify/";
         document.RPA_bug_name.submit();
+    }
+    function RPA_TASK_GROUP_BUG_SEND_FLAG_modify(){
+        document.RPA_TASK_GROUP_BUG_SEND_FLAG_name.action="/RPA_TASK_GROUP_BUG_SEND_FLAG_modify/";
+        document.RPA_TASK_GROUP_BUG_SEND_FLAG_name.submit();
     }
     function RPA_TASK_CHOOSE_CHAT_COUNT_modify(){
         document.RPA_TASK_CHOOSE_CHAT_COUNT_name.action="/RPA_TASK_CHOOSE_CHAT_COUNT_modify/";
