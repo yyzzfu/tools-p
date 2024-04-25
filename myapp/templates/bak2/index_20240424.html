@@ -24,62 +24,33 @@
             color: #3c3f41;
             font-size: 12px;
         }
-
-        /* 弹框样式 */
-    .modal {
-      display: none; /* 默认隐藏弹框 */
-      position: fixed;
-      z-index: 1;
-      padding-top: 520px;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0, 0, 0, 0.4); /* 半透明背景 */
-    }
-
-    /* 弹框内容样式 */
-    .modal-content {
-      background-color: #fefefe;
-      margin: auto;
-      padding: 20px;
-      border: 1px solid #888;
-      width: 25%;
-      height: 25%;
-    }
-
-    /* 关闭按钮样式 */
-    .close {
-      color: #aaaaaa;
-      float: right;
-      font-size: 28px;
-      font-weight: bold;
-    }
-
-    .close:hover,
-    .close:focus {
-      color: #000;
-      text-decoration: none;
-      cursor: pointer;
-    }
     </style>
     <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css">
 </head>
 <body style=" background-color: #f2f3f5">
     <div style="text-align:center; margin: 30px auto;">
         <div style="height: 155px;margin: 50px auto" id="chat">
+{#            <form action="/modify" method="post">#}
             <form action="/modify" method="post" onsubmit="return assert_chat()">
             {% csrf_token %}
                 <label style="font-weight: bold; font-size: 17px"> 会话id:</label>
-                <input type="text"  id="session_id" name="session_id" style="width:200px;height:35px" placeholder="输入正确的会话id" value="">&nbsp &nbsp &nbsp
+{#                <input type="text"  id="session_id" name="session_id" style="width:200px;height:35px" required placeholder="输入正确的会话id" >&nbsp &nbsp &nbsp#}
+                <input type="text"  id="session_id" name="session_id" style="width:200px;height:35px" placeholder="输入正确的会话id" >&nbsp &nbsp &nbsp
                 <input  type="submit" value="会话掉线" class="btn btn-primary"> &nbsp &nbsp
                 <a href="/get_record" class="btn btn-primary">操作记录</a>
+                <div style="margin-top: 20px;">
+                    <label style="font-weight: bold; font-size: 17px"> 环境:</label>
+                    <input type="radio" name="env" value="QA2" checked="checked"><strong>新QA</strong>&nbsp
+                    <input type="radio" name="env" value="QA"><strong>老QA</strong> &nbsp &nbsp
+                    <span class="c5">选择正确的环境</span>
+
+                </div>
                 <div style="margin-top: 20px">
                     <p class="c4">{{ session_id }}</p>
                     <p class="c4">{{ create_time }}</p>
                     <p class="c4">{{ create_time_modify }}</p>
                     <p >{{ error_session_id }}</p>
+                    <p>{{ error_env }}</p>
                     <p class="c2">{{ error_msg }}</p>
                 </div>
             </form>
@@ -89,7 +60,7 @@
             {% csrf_token %}
                 <label style="font-weight: bold; font-size: 17px"> 账号:</label>
                 <input type="text" name="kf_account" style="width:150px;height:35px" required placeholder="输入正确的客服账号">&nbsp &nbsp &nbsp
-{#                <input  type="submit" value="查询着陆页" class="btn btn-primary"> &nbsp &nbsp#}
+                <input  type="submit" value="查询着陆页" class="btn btn-primary"> &nbsp &nbsp
                 <button  class="btn btn-primary" onclick="get_page()"> 查询着陆页 </button>&nbsp &nbsp
                 <button  class="btn btn-primary" onclick="modify_password()"> 重置密码</button>&nbsp &nbsp
                 <span class="c5">数据查询、处理需要时间</span>
@@ -125,88 +96,44 @@
         <div class="c1" style="height: 60px" id="phone">
             <form  method="post" name="card_or_phone">
             {% csrf_token %}
+            <label style="font-weight: bold; font-size: 17px"> 数量:</label>
+            <input type="text" name="num" value="1" style="width:60px;height:35px;text-align:center;vertical-align:middle;" required placeholder="输入数量">&nbsp &nbsp
             <button  class="btn btn-primary" onclick="id_card()"> 生成身份证号 </button>&nbsp &nbsp
             <button  class="btn btn-primary" onclick="phone()"> 生成手机号</button>&nbsp &nbsp
-            <span class="c5">随机生成数据，单击数据可复制</span>
-            </form>
+            <span class="c5">输入1-50之间的整数</span>
+
+        </form>
         <br>
             <span class="c2">{{ error_card_or_phone_msg }}</span>
             {% for id in card_or_phone_list %}
                 <span class="c3 click" style="font-weight: bold;display: inline-block;width: 200px; font-size: 17px" onclick="f()">{{ id }}</span>
             {% endfor %}
         </div>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
 
-        <span class="c1" style="height: 60px">
-            <label style="font-weight: bold; font-size: 17px"> RPA卡bug参数:</label>&nbsp &nbsp
-            <span>{{ RPA_bug }}</span>&nbsp &nbsp
-            <button  class="btn btn btn-warning" onclick="openModal('myModal1')"> 修改 </button>&nbsp &nbsp&nbsp &nbsp&nbsp &nbsp&nbsp &nbsp&nbsp &nbsp
+
+        <div class="c1" style="height: 60px" id="phone">
+            <form  method="post" name="card_or_phone">
+            {% csrf_token %}
+            <label style="font-weight: bold; font-size: 17px"> 数量:</label>
+            <input type="text" name="num" value="1" style="width:60px;height:35px;text-align:center;vertical-align:middle;" required placeholder="输入数量">&nbsp &nbsp
+            <button  class="btn btn-primary" onclick="id_card()"> 生成身份证号 </button>&nbsp &nbsp
+            <button  class="btn btn-primary" onclick="phone()"> 生成手机号</button>&nbsp &nbsp
+            <span class="c5">输入1-50之间的整数</span>
+
+        </form>
+        <br>
             <span class="c2">{{ error_card_or_phone_msg }}</span>
-        </span>
-         <div id="myModal1" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeModal('myModal1')">&times;</span>
-                <!-- 在这里添加输入框、下拉框等元素，用于输入修改内容 -->
-                <form  method="post" name="RPA_bug_name">
-                    {% csrf_token %}
-                    <label style="font-weight: bold; font-size: 17px"> RPA卡bug参数: </label>
-                    <input type="radio" name="RPA_bug" value="Y" checked="checked"><strong>开启</strong>&nbsp &nbsp
-                    <input type="radio" name="RPA_bug" value="N"><strong>关闭</strong>&nbsp &nbsp
-                    <button  class="btn btn-primary" onclick="RPA_bug_modify()"> 确定 </button>&nbsp &nbsp
-             </form>
-            </div>
+            {% for id in card_or_phone_list %}
+                <span class="c3 click" style="font-weight: bold;display: inline-block;width: 200px; font-size: 17px" onclick="f()">{{ id }}</span>
+            {% endfor %}
         </div>
-
-        <span class="c1" style="height: 60px;display: inline;">
-            <label style="font-weight: bold; font-size: 17px"> 群发任务转发数:</label>&nbsp &nbsp
-            <span>RPA_TASK_CHOOSE_CHAT_COUNT</span>&nbsp &nbsp
-            <button  class="btn btn-warning" onclick="openModal('myModal2')"> 修改 </button>&nbsp &nbsp&nbsp &nbsp&nbsp &nbsp&nbsp &nbsp&nbsp
-            <span class="c2">{{ error_card_or_phone_msg }}</span>
-        </span>
-        <div id="myModal2" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeModal('myModal2')">&times;</span>
-                <!-- 在这里添加输入框、下拉框等元素，用于输入修改内容 -->
-                <form  method="post" name="RPA_TASK_CHOOSE_CHAT_COUNT_name">
-                    {% csrf_token %}
-                    <label style="font-weight: bold; font-size: 17px"> 群发任务转发数:</label>
-                    <input type="number" name="num"  style="width:80px;height:35px;text-align:center;vertical-align:middle;" required placeholder="输入转发数">&nbsp &nbsp
-                    <button  class="btn btn-primary" onclick="RPA_TASK_CHOOSE_CHAT_COUNT_modify()"> 确定 </button>&nbsp &nbsp
-             </form>
-            </div>
-        </div>
-
-        <span class="c1" style="height: 60px;display: inline;">
-            <label style="font-weight: bold; font-size: 17px"> 快捷任务转发数:</label>&nbsp &nbsp
-            <span>RPA_QUICK_TASK_CHOOSE_CHAT_COUNT</span>&nbsp &nbsp
-            <button  class="btn btn btn-warning" onclick="openModal('myModal3')"> 修改 </button>&nbsp &nbsp
-            <span class="c2">{{ error_card_or_phone_msg }}</span>
-        </span>
-        <div id="myModal3" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeModal('myModal3')">&times;</span>
-                <!-- 在这里添加输入框、下拉框等元素，用于输入修改内容 -->
-                <form  method="post" name="RPA_QUICK_TASK_CHOOSE_CHAT_COUNT_name">
-                    {% csrf_token %}
-                    <label style="font-weight: bold; font-size: 17px"> 快捷任务转发数:</label>
-                    <input type="number" name="num"  style="width:80px;height:35px;text-align:center;vertical-align:middle;" required placeholder="输入转发数">&nbsp &nbsp
-                    <button  class="btn btn-primary" onclick="RPA_QUICK_TASK_CHOOSE_CHAT_COUNT_modify()"> 确定 </button>&nbsp &nbsp
-             </form>
-            </div>
-        </div>
-
     </div>
+{#    <div >#}
+{#        <a href="/tantou" class="btn btn-info">刷新页面1</a>#}
+{#    </div>#}
 </body>
 </html>
 <script src="/static/bootstrap/js/jquery-3.6.0.min.js"></script>
-{#<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>#}
 <script>
     function id_card(){
         document.card_or_phone.action="/id_card/";
@@ -239,18 +166,7 @@
         {#oInput.style.display='none';#}
         document.body.removeChild(oInput)
     }
-    function RPA_bug_modify(){
-        document.RPA_bug_name.action="/RPA_bug_modify/";
-        document.RPA_bug_name.submit();
-    }
-    function RPA_TASK_CHOOSE_CHAT_COUNT_modify(){
-        document.RPA_TASK_CHOOSE_CHAT_COUNT_name.action="/RPA_TASK_CHOOSE_CHAT_COUNT_modify/";
-        document.RPA_TASK_CHOOSE_CHAT_COUNT_name.submit();
-    }
-    function RPA_QUICK_TASK_CHOOSE_CHAT_COUNT_modify(){
-        document.RPA_QUICK_TASK_CHOOSE_CHAT_COUNT_name.action="/RPA_QUICK_TASK_CHOOSE_CHAT_COUNT_modify/";
-        document.RPA_QUICK_TASK_CHOOSE_CHAT_COUNT_name.submit();
-    }
+
     /*
     * 说明: 弹窗提示,3秒后自动消失
     * */
@@ -277,46 +193,35 @@
     }
 
     function assert_chat() {
-        let session_id = $('#session_id').val();
-        console.log('haha'+session_id.length());
-        if ( session_id === '' ) {
+        let session_id = $('#session_id').text();
+		session_id = session_id.replace(/\s+/g,'');
+        // console.log(session_id)
+        if (session_id.length != 24 || session_id == '' || session_id == undefined) {
             let test = '请输入正确的会话id';
             {#let warning_css = 'text-align: center;padding: 10px 20px;border-radius: 5px;color: #8a6d3b;background-color: #fcf8e3;border-color: #faebcc;;margin: 0 auto;width: 200px;';#}
             let warning_css = 'text-align: center;padding: 10px 20px;border-radius: 5px;color: #a94442;background-color: #f2dede;border-color: #ebccd1;margin: 0 auto;width: 200px;';
-            let add_alert = '<div id="assert_chat" style="'+warning_css+'">'+test+'</div>';
+            let add_alert = '<div id="assert_test" style="'+warning_css+'">'+test+'</div>';
             $('body div#chat').append(add_alert);
             //transition: all 3s 2s linear;
-            $('#assert_chat').css({"top":"100px","transition":"3s"});
+            $('#assert_test').css({"top":"100px","transition":"3s"});
             setTimeout(() => {
                 // console.log('sleep 1.8s.');
                 let index = 10;
                 let interval = setInterval(function () {
                     if(index === -60){ //设3秒时间段
                         clearInterval(interval);
-                        $('#assert_chat').remove(); //显示完后删除节点
+                        $('#assert_test').remove(); //显示完后删除节点
                     }
-                    $('div#assert_chat').css({"opacity":(index/10)});
+                    $('div#assert_test').css({"opacity":(index/10)});
                     // console.log('===>',index);
                     index--;
                     },30)
                 }, 1000); //延时1.8秒
             return false
             }
-        else {
-            return true
+		else {
+			return true
         }
-    }
-
-    // 打开弹框的函数
-    function openModal(model) {
-      {#document.getElementById("myModal").style.display = "block"; // 显示弹框#}
-      document.getElementById(model).style.display = "block"; // 显示弹框
-    }
-
-    // 关闭弹框的函数
-    function closeModal(model) {
-      {#document.getElementById("myModal").style.display = "none"; // 隐藏弹框#}
-      document.getElementById(model).style.display = "none"; // 隐藏弹框
     }
 
 </script>

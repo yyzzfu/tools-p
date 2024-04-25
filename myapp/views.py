@@ -2,6 +2,7 @@ import hashlib
 from django.shortcuts import render, redirect
 import datetime
 import pymongo
+import pymysql
 from bson.objectid import ObjectId
 from faker import Faker
 import random
@@ -14,10 +15,10 @@ import jsonpath
 
 class DoMongo:
 
-    def __init__(self, session_id: str, env=None):
+    def __init__(self, session_id: str, env='qa'):
         host = 'dds-bp18b483a48184b41.mongodb.rds.aliyuncs.com'  # 默认使用新QA
         if env.lower() == 'qa':  # 老QA
-            host = 'dds-bp173fdc085920341.mongodb.rds.aliyuncs.com'
+            host = 'dds-bp173fdc085920342.mongodb.rds.aliyuncs.com'
         self.client = pymongo.MongoClient('mongodb://chat:Mantis20160518@{}:3717'.format(host))
         db = self.client['chat']
         self.collection = db['chats']
@@ -45,22 +46,86 @@ class DoMongo:
         self.client.close()
 
 
-# content_select = {
-#         "select":
-#         [
-#             {"company": 1402, "company_info": "新QA--1402"},
-#             {"company": 1500, "company_info": "新QA--1500"},
-#             {"company": 3401, "company_info": "老QA--3401"},
-#             {"company": 3403, "company_info": "新QA--3403"},
-#             {"company": 8424, "company_info": "GS--8424"},
-#             {"company": 8425, "company_info": "GS--8424"},
-#         ]
-#     }
+class MysqlOperate:
+    def __init__(self):
+        self.host = 'pc-bp198ysa2gu863u18.rwlb.rds.aliyuncs.com'
+        self.db = 'scrm-qa'
+        self.port = 3306
+        self.user = 'scrm-qa'
+        self.password = 'XDS31cJXRyOr8ETz'
+        self.conn = None
+        self.cur = None
+
+    def __conn_db(self):
+        try:
+            self.conn = pymysql.connect(host=self.host, user=self.user, passwd=self.password, db=self.db,
+                                        port=self.port, charset="utf8")
+        except Exception as e:
+            print(e)
+            return False
+        self.cur = self.conn.cursor()
+        return True
+
+    def __close_conn(self):
+        self.cur.close()
+        self.conn.close()
+        return True
+
+    def __commit(self):
+        self.conn.commit()
+        return True
+
+    def query(self, sql):
+        self.__conn_db()
+        self.cur.execute(sql)
+        query_data = self.cur.fetchall()
+        if query_data == ():
+            query_data = None
+            print("没有获取到数据，表为空")
+        else:
+            pass
+        self.__close_conn()
+        return query_data
+
+    def insert_update_table(self, sql):
+        self.__conn_db()
+        self.cur.execute(sql)
+        self.__commit()
+        self.__close_conn()
+
+    def search_data(self):
+        sql_for_RPA_TASK_BUG_SEND_FLAG = "select * from base_company_config where company_id = 50012 and code = 'RPA_TASK_BUG_SEND_FLAG';"
+        sql_for_RPA_TASK_CHOOSE_CHAT_COUNT = "select * from base_company_config where company_id = 50012 and code = 'RPA_TASK_CHOOSE_CHAT_COUNT';"
+        sql_for_RPA_QUICK_TASK_CHOOSE_CHAT_COUNT = "select * from base_company_config where company_id = 50012 and code = 'RPA_QUICK_TASK_CHOOSE_CHAT_COUNT';"
+        res1 = self.query(sql_for_RPA_TASK_BUG_SEND_FLAG)
+        res2 = self.query(sql_for_RPA_TASK_CHOOSE_CHAT_COUNT)
+        res3 = self.query(sql_for_RPA_QUICK_TASK_CHOOSE_CHAT_COUNT)
+        return str(res1), str(res2), str(res3)
+
+
+    def update_RPA_TASK_BUG_SEND_FLAG(self):
+        sql_for_RPA_TASK_BUG_SEND_FLAG = "update base_company_config set value = 'Y' where company_id = 50012 and code = 'RPA_TASK_BUG_SEND_FLAG';"
+
+    def update_RPA_TASK_CHOOSE_CHAT_COUNT(self):
+        sql_for_RPA_TASK_BUG_SEND_FLAG = "update base_company_config set value = 'Y' where company_id = 50012 and code = 'RPA_TASK_CHOOSE_CHAT_COUNT';"
+
+    def update_RPA_QUICK_TASK_CHOOSE_CHAT_COUNT(self):
+        sql_for_RPA_TASK_BUG_SEND_FLAG = "update base_company_config set value = 'Y' where company_id = 50012 and code = 'RPA_QUICK_TASK_CHOOSE_CHAT_COUNT';"
 
 
 def index(request):
-    return render(request, "index.html")
+    search_data = MysqlOperate().search_data()
+    return render(request, "index.html", {"RPA_bug": search_data[0], 'RPA_TASK_CHOOSE_CHAT_COUNT':search_data[1], 'RPA_QUICK_TASK_CHOOSE_CHAT_COUNT':search_data[2]})
 
+
+def RPA_bug_modify():
+    ...
+
+def RPA_TASK_CHOOSE_CHAT_COUNT_modify():
+    ...
+
+def RPA_QUICK_TASK_CHOOSE_CHAT_COUNT_modify():
+    ...
 
 def id_card(request):
     if request.method == 'GET':
@@ -113,19 +178,16 @@ def modify(request):
     if request.method == 'GET':
         return redirect('/index')
     session_id = request.POST.get('session_id')
-    env = request.POST.get('env')
     try:
         if len(session_id) != 24:
             raise Exception
         submit_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        do = DoMongo(session_id, env)
+        do = DoMongo(session_id)
         create_time = do.select_mongo()
         do.modify_mongo()
         create_time_modify = do.select_mongo()
         do.close_collect()
-        env_translation = "新QA"
-        if env == "QA":
-            env_translation = "老QA"
+        env_translation = "测试环境"
         models.Record.objects.create(session_id=session_id, env=env_translation, status="成功",
                                      crete_time_before=create_time,
                                      crete_time_after=create_time_modify, submit_time=submit_time)
@@ -137,14 +199,9 @@ def modify(request):
     except Exception as e:
         print(e)
         error_session_id = "提交的会话id：" + session_id
-        error_env = env
-        if error_env == "QA2":
-            error_env = "选择的环境：新QA"
-        else:
-            error_env = "选择的环境：老QA"
         error_msg = '修改失败！确保选择的环境、输入的会话id正确！'
         return render(request, 'index.html',
-                      {"error_msg": error_msg, "error_session_id": error_session_id, "error_env": error_env})
+                      {"error_msg": error_msg, "error_session_id": error_session_id})
 
 
 def get_record1(request):
@@ -185,7 +242,7 @@ all_company_info = {
              "test_page_before": "pg-chatn6"},
     "1500": {"username": "fl@1500", "password": "Qwer1234", "domain": "b2010.bjmantis.net",
              "test_page_before": "pg-demo2"},
-    "50012": {"username": "yqadmin@1500", "password": "Qwer1234", "domain": "b2006.bjmantis.net",
+    "50012": {"username": "yqadmin@50012", "password": "Qwer1234", "domain": "b2006.bjmantis.net",
               "test_page_before": "pg-demo2"}
 }
 
@@ -197,7 +254,6 @@ def get_page(request):
     company = request.POST.get('company')
 
     test_page_template = r"https://{}.bjmantis.net/chat/t1/index.html?{}#{}"
-    non_trace_page_template = r"https://{}.bjmantis.net/chat/t1/nonTrace.html?{}#{}"
     url_token = r"https://{}/sso/oauth/token"
     url_query_service_group = r"https://{}/msp-war/serviceGroupManage/queryServiceGroup.do"
     url_config_search = r"https://{}/msp-war/chat_ext/configSearch.do"
@@ -218,17 +274,27 @@ def get_page(request):
 
     headers_for_token = {"Authorization": "Basic bWFudGlzX2NybToxMjM0NTY="}
 
+    def generate_sign(api, username):
+        privatekey = 'ohAMD!QAykGLSs&9UtwGTQ&^QJK!gBJ6'
+        import uuid
+        sign = privatekey + '#' + api + username + '#' + str(int(time.time()*1000))
+        md5 = hashlib.md5(sign.encode('utf8')).hexdigest()
+        return {"timestamp": int(time.time()*1000),
+                "sign": md5,
+                "nonce": str(uuid.uuid4())}
+
     s = requests.session()
 
     # 登录获取access_token
+    headers_for_process_pre = {}
     try:
         res = s.post(url_token, data=data_for_token, headers=headers_for_token)
         access_token = res.json()['access_token']
         access_token = "Bearer " + access_token
-
+        print(access_token)
         # 获取客服分组名字、id
         data_for_query_service_group = {"account": kf_account}
-        headers_for_process = {"Authorization": access_token}
+        headers_for_process_pre.update(Authorization=access_token)
     except:
         kf_account = "输入的客服账号：" + kf_account
         company = "-----选择的公司：" + company
@@ -238,7 +304,9 @@ def get_page(request):
         }
         return render(request, "index.html", context)
     try:
-        res = s.post(url_query_service_group, json=data_for_query_service_group, headers=headers_for_process)
+        query_service_group = r"/msp-war/serviceGroupManage/queryServiceGroup.do"
+        headers_for_process_1 = generate_sign(api=query_service_group, username=username).update(headers_for_process_pre)
+        res = s.post(url_query_service_group, json=data_for_query_service_group, headers=headers_for_process_1)
         res_json = res.json()
         res_data = res_json['data']
         service_group_name = jsonpath.jsonpath(res_data, "$..name")
@@ -262,7 +330,9 @@ def get_page(request):
         service_group_name_and_kf_weight_dict = {}
         for i in service_group_id:
             data_for_query_list = {"serviceGroupId": str(i)}
-            res = s.post(url_query_list, json=data_for_query_list, headers=headers_for_process)
+            query_list = r"/msp-war/oper/baseServiceGroup/queryList.do"
+            headers_for_process_2 = generate_sign(api=query_list, username=username).update(headers_for_process_pre)
+            res = s.post(url_query_list, json=data_for_query_list, headers=headers_for_process_2)
             res_json = res.json()
             res_data = res_json['data']
             kf_level_code = jsonpath.jsonpath(res_data, "$..levelCode")
@@ -288,7 +358,10 @@ def get_page(request):
 
         for i in service_group_id:
             data_config_search = {"condition": {"groupIds": [str(i)]}, "pageNum": 1, "pageSize": 100}
-            res = s.post(url_config_search, json=data_config_search, headers=headers_for_process)
+
+            config_search = r"/msp-war/chat_ext/configSearch.do"
+            headers_for_process_3 = generate_sign(api=config_search, username=username).update(headers_for_process_pre)
+            res = s.post(url_config_search, json=data_config_search, headers=headers_for_process_3)
             probe_id = jsonpath.jsonpath(res.json()['data']["list"], "$..id")
             probe_name = jsonpath.jsonpath(res.json()['data']["list"], "$..configName")
             if isinstance(probe_id, bool):
@@ -320,17 +393,19 @@ def get_page(request):
                 non_trace_page = ''
                 if j:
                     test_page = test_page_template.format(company_info["test_page_before"], company, j)
-                    non_trace_page = non_trace_page_template.format(company_info["test_page_before"], company, j)
+                    # non_trace_page = non_trace_page_template.format(company_info["test_page_before"], company, j)
                 data_pre.append(
                     {'kf_account': kf_account + '/权重' + service_group_name_and_kf_weight_dict[service_group_name_1],
                      'service_group_name': service_group_name_1,
                      'probe_name': probe_name_1,
                      'test_page': test_page,
-                     'non_trace_page': non_trace_page})
+                     # 'non_trace_page': non_trace_page
+                     })
         kf_info = {"kf_account": kf_account, "service_group_name_num": service_group_name_num, "probe_num": probe_num}
         context = {"data_pre": data_pre, "kf_info": kf_info}
         return render(request, "page_list.html", context)
-    except:
+    except Exception as e:
+        print(e)
         kf_account = "输入的客服账号：" + kf_account
         company = "-----选择的公司：" + company
         error_msg_1 = kf_account + company
@@ -433,6 +508,3 @@ def modify_password(request):
         }
         return render(request, 'index.html', context)
 
-
-def tantou(request):
-    return render(request, 'tantou.html')
