@@ -28,5 +28,7 @@ urlpatterns = [
     path('get_page', views.get_page),
     path('get_page/', views.get_page),
     path('modify_password', views.modify_password),
-    path('tantou', views.tantou),
+    path('RPA_bug_modify/', views.RPA_bug_modify),
+    path('RPA_TASK_CHOOSE_CHAT_COUNT_modify/', views.RPA_TASK_CHOOSE_CHAT_COUNT_modify),
+    path('RPA_QUICK_TASK_CHOOSE_CHAT_COUNT_modify/', views.RPA_QUICK_TASK_CHOOSE_CHAT_COUNT_modify),
 ]
