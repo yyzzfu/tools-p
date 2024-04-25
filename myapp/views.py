@@ -105,15 +105,15 @@ class MysqlOperate:
 
     def update_RPA_TASK_BUG_SEND_FLAG(self, RPA_TASK_BUG):
         sql_for_RPA_TASK_BUG_SEND_FLAG = f"update base_company_config set value = {RPA_TASK_BUG} where company_id = 50012 and code = 'RPA_TASK_BUG_SEND_FLAG';"
-        time.sleep(0.5)
+        self.insert_update_table(sql_for_RPA_TASK_BUG_SEND_FLAG)
 
     def update_RPA_TASK_CHOOSE_CHAT_COUNT(self, count):
-        sql_for_RPA_TASK_BUG_SEND_FLAG = f"update base_company_config set value = {count} where company_id = 50012 and code = 'RPA_TASK_CHOOSE_CHAT_COUNT';"
-        time.sleep(0.5)
+        sql_for_RPA_TASK_CHOOSE_CHAT_COUNT = f"update base_company_config set value = {count} where company_id = 50012 and code = 'RPA_TASK_CHOOSE_CHAT_COUNT';"
+        self.insert_update_table(sql_for_RPA_TASK_CHOOSE_CHAT_COUNT)
 
     def update_RPA_QUICK_TASK_CHOOSE_CHAT_COUNT(self, count):
-        sql_for_RPA_TASK_BUG_SEND_FLAG = f"update base_company_config set value = {count} where company_id = 50012 and code = 'RPA_QUICK_TASK_CHOOSE_CHAT_COUNT';"
-        time.sleep(0.5)
+        sql_for_RPA_QUICK_TASK_CHOOSE_CHAT_COUNT = f"update base_company_config set value = {count} where company_id = 50012 and code = 'RPA_QUICK_TASK_CHOOSE_CHAT_COUNT';"
+        self.insert_update_table(sql_for_RPA_QUICK_TASK_CHOOSE_CHAT_COUNT)
 
 
 def index(request):
