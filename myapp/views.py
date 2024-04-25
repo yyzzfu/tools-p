@@ -133,7 +133,7 @@ def RPA_TASK_CHOOSE_CHAT_COUNT_modify(request):
     if request.method == 'GET':
         return redirect('/index')
     count = request.POST.get('count')
-    MysqlOperate().update_RPA_TASK_BUG_SEND_FLAG(count)
+    MysqlOperate().update_RPA_TASK_CHOOSE_CHAT_COUNT(count)
     return redirect('/index')
 
 def RPA_QUICK_TASK_CHOOSE_CHAT_COUNT_modify(request):
@@ -147,6 +147,7 @@ def RPA_QUICK_TASK_CHOOSE_CHAT_COUNT_modify(request):
 def id_card(request):
     if request.method == 'GET':
         return redirect('/index')
+    search_data = MysqlOperate().search_data()
     try:
         # num = int(request.POST.get('num'))
         # if num > 50:
@@ -162,7 +163,8 @@ def id_card(request):
                 id_list.append(id)
                 a += 1
                 if a == num:
-                    return render(request, "index.html", {"card_or_phone_list": id_list})
+                    return render(request, "index.html", {"card_or_phone_list": id_list,"RPA_bug": search_data[0], 'RPA_TASK_CHOOSE_CHAT_COUNT': search_data[1],
+                                          'RPA_QUICK_TASK_CHOOSE_CHAT_COUNT': search_data[2]})
     except:
         error_card_or_phone_msg = "请输入1-50之间的整数"
         return render(request, "index.html", {'error_card_or_phone_msg': error_card_or_phone_msg})
@@ -171,6 +173,7 @@ def id_card(request):
 def get_phone(request):
     if request.method == 'GET':
         return redirect('/index')
+    search_data = MysqlOperate().search_data()
     try:
         # num = int(request.POST.get('num'))
         # if num > 50:
@@ -185,7 +188,8 @@ def get_phone(request):
             a += 1
             phone += 1
             if a == num:
-                return render(request, 'index.html', {"card_or_phone_list": phone_list})
+                return render(request, 'index.html', {"card_or_phone_list": phone_list, "RPA_bug": search_data[0], 'RPA_TASK_CHOOSE_CHAT_COUNT': search_data[1],
+                                          'RPA_QUICK_TASK_CHOOSE_CHAT_COUNT': search_data[2]})
     except:
         error_card_or_phone_msg = "请输入1-50之间的整数"
         return render(request, "index.html", {'error_card_or_phone_msg': error_card_or_phone_msg})
@@ -195,6 +199,7 @@ def modify(request):
     if request.method == 'GET':
         return redirect('/index')
     session_id = request.POST.get('session_id')
+    search_data = MysqlOperate().search_data()
     try:
         if len(session_id) != 24:
             raise Exception
@@ -212,7 +217,8 @@ def modify(request):
         create_time_modify = '修改后的create_time：{}'.format(create_time_modify)
         session_id = '提交的会话id：{}'.format(session_id)
         return render(request, 'index.html',
-                      {"session_id": session_id, "create_time": create_time, "create_time_modify": create_time_modify})
+                      {"session_id": session_id, "create_time": create_time, "create_time_modify": create_time_modify, "RPA_bug": search_data[0], 'RPA_TASK_CHOOSE_CHAT_COUNT': search_data[1],
+                                          'RPA_QUICK_TASK_CHOOSE_CHAT_COUNT': search_data[2]})
     except Exception as e:
         print(e)
         error_session_id = "提交的会话id：" + session_id
